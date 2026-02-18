@@ -1,0 +1,8 @@
+# Backend Ignore
+node_modules
+.env
+client/
+public/uploads/
+coverage
+npm-debug.log
+workora_uploads/
