@@ -7,12 +7,11 @@ console.log("DEBUG: Cloudinary Config Loaded. Cloud Name:", process.env.CLOUDINA
 const storage = new CloudinaryStorage({
     cloudinary: cloudinary,
     params: {
-        folder: 'workora_uploads', // Folder name in Cloudinary
-        allowed_formats: ['jpg', 'png', 'jpeg', 'webp'], // Allowed file formats
+        // folder: 'workora_uploads', // access control?
+        resource_type: 'auto',
+        // allowed_formats: ['jpg', 'png', 'jpeg', 'webp'],
         public_id: (req, file) => {
-            // Generate a unique filename using timestamp and random number
             const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-            // Remove extension from original name as Cloudinary adds it automatically based on format
             const name = file.originalname.split('.')[0];
             return `${name}-${uniqueSuffix}`;
         },
