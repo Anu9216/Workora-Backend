@@ -71,10 +71,10 @@ exports.login = async (req, res) => {
 
             // Set cookie if using cookies (optional, but good for security)
             // Set cookie if using cookies (optional, but good for security)
-            res.cookie('token', token, {
+            res.cookie('accessToken', token, {
                 httpOnly: true,
-                secure: false, // FORCE FALSE FOR LOCALHOST DEBUGGING
-                sameSite: 'lax', // Relaxed for localhost
+                secure: process.env.NODE_ENV === 'production',
+                sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax', // 'none' needed for Vercel->Render
                 maxAge: 30 * 24 * 60 * 60 * 1000 // 30 days
             });
 

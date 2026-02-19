@@ -16,9 +16,9 @@ const checkAuth = async (req, res, next) => {
         } catch (error) {
             return res.status(401).json({ message: 'Not authorized, token failed' });
         }
-    } else if (req.cookies && req.cookies.token) {
+    } else if (req.cookies && (req.cookies.accessToken || req.cookies.token)) {
         try {
-            token = req.cookies.token;
+            token = req.cookies.accessToken || req.cookies.token;
             const decoded = jwt.verify(token, process.env.JWT_SECRET || 'secret');
             req.user = await User.findById(decoded.id).select('-password');
             return next();
