@@ -3,10 +3,19 @@ const dotenv = require('dotenv');
 
 dotenv.config();
 
+const cloudName = process.env.CLOUDINARY_CLOUD_NAME;
+const apiKey = process.env.CLOUDINARY_API_KEY;
+const apiSecret = process.env.CLOUDINARY_API_SECRET;
+
+console.log("DEBUG: Cloudinary Config...");
+console.log(`DEBUG: Cloud Name: ${cloudName}`);
+console.log(`DEBUG: API Key: ${apiKey ? `${apiKey.substring(0, 4)}... (Length: ${apiKey.length})` : "MISSING"}`);
+console.log(`DEBUG: API Secret: ${apiSecret ? `${apiSecret.substring(0, 4)}... (Length: ${apiSecret.length})` : "MISSING"}`);
+
 cloudinary.config({
-    cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
-    api_key: process.env.CLOUDINARY_API_KEY,
-    api_secret: process.env.CLOUDINARY_API_SECRET
+    cloud_name: cloudName,
+    api_key: apiKey,
+    api_secret: apiSecret
 });
 
 module.exports = cloudinary;
