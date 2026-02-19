@@ -12,37 +12,25 @@ const upload = multer({ storage: storage });
 const uploadMiddleware = (req, res, next) => {
     if (!req.file) return next();
 
-    const streamUpload = (req) => {
-        return new Promise((resolve, reject) => {
-            const stream = cloudinary.uploader.upload_stream(
-                {
-                    // folder: 'workora_uploads', // Removing folder to fix 403
-                    resource_type: 'auto',
-                },
-                (error, result) => {
-                    if (result) {
-                        resolve(result);
-                    } else {
-                        console.error("Cloudinary Upload Error:", error);
-                        reject(error);
-                    }
-                }
-            );
-
-            streamifier.createReadStream(req.file.buffer).pipe(stream);
-        });
-    };
-
     async function upload(req) {
         try {
-            console.log(`DEBUG: Starting Upload. File: ${req.file.originalname}, Size: ${req.file.size}, Type: ${req.file.mimetype}`);
-            const result = await streamUpload(req);
-            console.log("DEBUG: Manual Upload Success:", result.secure_url);
+            console.log(`DEBUG: Starting Base64 Upload. File: ${req.file.originalname}`);
+
+            // Convert buffer to Base64
+            const b64 = Buffer.from(req.file.buffer).toString('base64');
+            let dataURI = "data:" + req.file.mimetype + ";base64," + b64;
+
+            const result = await cloudinary.uploader.upload(dataURI, {
+                resource_type: 'auto',
+                // folder: 'workora_uploads' // Keep folder off for now
+            });
+
+            console.log("DEBUG: Base64 Upload Success:", result.secure_url);
             req.imageUrl = result.secure_url;
             next();
         } catch (error) {
-            console.error("DEBUG: Manual Upload Failed:", error);
-            res.status(500).json({ message: "Image upload failed", error: error.message });
+            console.error("DEBUG: Base64 Upload Failed:", error);
+            res.status(500).json({ message: "Image upload failed", error: error.message || "Unknown Cloudinary Error" });
         }
     }
 
