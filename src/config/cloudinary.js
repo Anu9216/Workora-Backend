@@ -18,4 +18,13 @@ cloudinary.config({
     api_secret: apiSecret
 });
 
+// Test connection immediately
+cloudinary.api.ping((error, result) => {
+    if (error) {
+        console.error("DEBUG: Cloudinary Ping Failed!", error);
+    } else {
+        console.log("DEBUG: Cloudinary Ping Success!", result);
+    }
+});
+
 module.exports = cloudinary;
