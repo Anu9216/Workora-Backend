@@ -15,8 +15,7 @@ console.log(`DEBUG: API Secret: ${apiSecret ? `${apiSecret.substring(0, 4)}... (
 cloudinary.config({
     cloud_name: cloudName,
     api_key: apiKey,
-    api_secret: apiSecret,
-    secure: true
+    api_secret: apiSecret
 });
 
 // Test connection immediately

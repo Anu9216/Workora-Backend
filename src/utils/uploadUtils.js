@@ -16,7 +16,7 @@ const uploadMiddleware = (req, res, next) => {
         return new Promise((resolve, reject) => {
             const stream = cloudinary.uploader.upload_stream(
                 {
-                    folder: 'workora_uploads',
+                    // folder: 'workora_uploads', // Removing folder to fix 403
                     resource_type: 'auto',
                 },
                 (error, result) => {
