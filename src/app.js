@@ -7,6 +7,9 @@ const cookieParser = require('cookie-parser');
 
 const app = express();
 
+// Trust proxy is required for secure cookies on Render/Heroku/Vercel
+app.set('trust proxy', 1);
+
 // Middleware
 app.use(helmet({
     crossOriginResourcePolicy: { policy: "cross-origin" }
