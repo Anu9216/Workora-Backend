@@ -20,12 +20,10 @@ const uploadMiddleware = (req, res, next) => {
             const b64 = Buffer.from(req.file.buffer).toString('base64');
             let dataURI = "data:" + req.file.mimetype + ";base64," + b64;
 
-            const result = await cloudinary.uploader.upload(dataURI, {
+            // Use unsigned_upload to bypass signature issues
+            const result = await cloudinary.uploader.unsigned_upload(dataURI, "workora", {
                 resource_type: 'auto',
-                // Explicitly pass credentials to ensure they are used
-                cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
-                api_key: process.env.CLOUDINARY_API_KEY,
-                api_secret: process.env.CLOUDINARY_API_SECRET
+                // folder: 'workora_uploads' 
             });
 
             console.log("DEBUG: Base64 Upload Success:", result.secure_url);
