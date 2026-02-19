@@ -3,31 +3,49 @@ const { CloudinaryStorage } = require('multer-storage-cloudinary');
 const cloudinary = require('../config/cloudinary');
 
 // Cloudinary Storage
-console.log("DEBUG: Cloudinary Config Loaded. Cloud Name:", process.env.CLOUDINARY_CLOUD_NAME);
-const storage = new CloudinaryStorage({
-    cloudinary: cloudinary,
-    params: {
-        // folder: 'workora_uploads', // access control?
-        resource_type: 'auto',
-        // allowed_formats: ['jpg', 'png', 'jpeg', 'webp'],
-        public_id: (req, file) => {
-            const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-            const name = file.originalname.split('.')[0];
-            return `${name}-${uniqueSuffix}`;
-        },
-    },
-});
+const streamifier = require('streamifier');
 
+// Use Memory Storage instead of CloudinaryStorage to skip the middleware issues
+const storage = multer.memoryStorage();
 const upload = multer({ storage: storage });
 
-// Middleware to expose the Cloudinary URL
 const uploadMiddleware = (req, res, next) => {
     if (!req.file) return next();
 
-    // Cloudinary returns the URL in req.file.path
-    req.imageUrl = req.file.path;
+    const streamUpload = (req) => {
+        return new Promise((resolve, reject) => {
+            const stream = cloudinary.uploader.upload_stream(
+                {
+                    folder: 'workora_uploads',
+                    resource_type: 'auto',
+                },
+                (error, result) => {
+                    if (result) {
+                        resolve(result);
+                    } else {
+                        console.error("Cloudinary Upload Error:", error);
+                        reject(error);
+                    }
+                }
+            );
 
-    next();
+            streamifier.createReadStream(req.file.buffer).pipe(stream);
+        });
+    };
+
+    async function upload(req) {
+        try {
+            const result = await streamUpload(req);
+            console.log("DEBUG: Manual Upload Success:", result.secure_url);
+            req.imageUrl = result.secure_url;
+            next();
+        } catch (error) {
+            console.error("DEBUG: Manual Upload Failed:", error);
+            res.status(500).json({ message: "Image upload failed", error: error.message });
+        }
+    }
+
+    upload(req);
 };
 
 module.exports = { upload, uploadMiddleware };
