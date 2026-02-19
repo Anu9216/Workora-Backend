@@ -22,7 +22,10 @@ const uploadMiddleware = (req, res, next) => {
 
             const result = await cloudinary.uploader.upload(dataURI, {
                 resource_type: 'auto',
-                // folder: 'workora_uploads' // Keep folder off for now
+                // Explicitly pass credentials to ensure they are used
+                cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+                api_key: process.env.CLOUDINARY_API_KEY,
+                api_secret: process.env.CLOUDINARY_API_SECRET
             });
 
             console.log("DEBUG: Base64 Upload Success:", result.secure_url);

@@ -12,6 +12,12 @@ console.log(`DEBUG: Cloud Name: ${cloudName}`);
 console.log(`DEBUG: API Key: ${apiKey ? `${apiKey.substring(0, 4)}... (Length: ${apiKey.length})` : "MISSING"}`);
 console.log(`DEBUG: API Secret: ${apiSecret ? `${apiSecret.substring(0, 4)}... (Length: ${apiSecret.length})` : "MISSING"}`);
 
+// Force CLOUDINARY_URL generation which is the most robust way to config the SDK
+if (cloudName && apiKey && apiSecret) {
+    process.env.CLOUDINARY_URL = `cloudinary://${apiKey}:${apiSecret}@${cloudName}`;
+    console.log("DEBUG: Generated CLOUDINARY_URL (masked):", process.env.CLOUDINARY_URL.replace(/:[^:@]+@/, ":****@"));
+}
+
 cloudinary.config({
     cloud_name: cloudName,
     api_key: apiKey,
