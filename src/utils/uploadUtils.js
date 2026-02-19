@@ -35,6 +35,7 @@ const uploadMiddleware = (req, res, next) => {
 
     async function upload(req) {
         try {
+            console.log(`DEBUG: Starting Upload. File: ${req.file.originalname}, Size: ${req.file.size}, Type: ${req.file.mimetype}`);
             const result = await streamUpload(req);
             console.log("DEBUG: Manual Upload Success:", result.secure_url);
             req.imageUrl = result.secure_url;
