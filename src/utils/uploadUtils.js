@@ -3,6 +3,7 @@ const { CloudinaryStorage } = require('multer-storage-cloudinary');
 const cloudinary = require('../config/cloudinary');
 
 // Cloudinary Storage
+console.log("DEBUG: Cloudinary Config Loaded. Cloud Name:", process.env.CLOUDINARY_CLOUD_NAME);
 const storage = new CloudinaryStorage({
     cloudinary: cloudinary,
     params: {
